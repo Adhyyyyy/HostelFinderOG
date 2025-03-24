@@ -1,0 +1,61 @@
+import express from "express";
+import dotenv from "dotenv";
+import mongoose from "mongoose";
+import authRoute from "./routes/auth.js";
+import usersRoute from "./routes/users.js";
+import hostelRoute from "./routes/hostel.js";
+import roomsRoute from "./routes/rooms.js";
+import cookieParser from "cookie-parser";
+import cors from "cors";
+import restaurantsRoute from "./routes/restaurants.js";  
+
+dotenv.config();
+
+const app = express();
+
+const connect = async () => {
+    try {
+        await mongoose.connect(process.env.MONGO);
+        console.log("connected to mongoDB.");
+    } catch (error) {
+        throw error;
+    }
+};
+
+mongoose.connection.on("disconnected", () => {
+    console.log("mongoDB disconnected!");
+});
+
+//middlewares
+app.use(cors({
+    origin: "http://localhost:3000", // Allow requests from frontend
+    credentials: true // Allow cookies & authentication headers
+}));
+
+app.use(cookieParser());
+app.use(express.json());
+
+app.use("/api/auth", authRoute);
+app.use("/api/users", usersRoute);
+app.use("/api/hostel", hostelRoute);
+app.use("/api/rooms", roomsRoute);
+app.use("/api/restaurants", restaurantsRoute);
+
+
+
+app.use((err,req,res,next)=>{
+    const errorStatus = err.status || 500;
+    const errorMessage = err.message || "Something went wrong!";
+    return res.status(errorStatus).json({
+        succes: false,
+        status: errorStatus,
+        message: errorMessage,
+        stack: err.stack,
+    });
+})
+
+
+app.listen(8800, () => {
+    connect();
+    console.log("Connected to backend!");
+});
