@@ -10,6 +10,7 @@ import cors from "cors";
 import restaurantsRoute from "./routes/restaurants.js";  
 import bedRoutes from "./routes/beds.js";
 import bookingRoutes from "./routes/bookings.js";
+import reviewRoute from "./routes/reviews.js";
 
 dotenv.config();
 
@@ -30,12 +31,11 @@ mongoose.connection.on("disconnected", () => {
 
 //middlewares
 app.use(cors({
-    origin: ["http://localhost:3000", "http://localhost:3001"], // Allow frontend URLs
-    credentials: true, // Allow cookies & authentication headers
-    methods: ["GET", "POST", "PUT", "DELETE"], // Allow specific methods
-    allowedHeaders: ["Content-Type", "Authorization"], // Allow custom headers
+  origin: ['http://localhost:3000', 'http://localhost:3001'], // Allow both client and admin URLs
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization']
 }));
-
 
 app.use(cookieParser());
 app.use(express.json());
@@ -47,6 +47,7 @@ app.use("/api/rooms", roomsRoute);
 app.use("/api/restaurants", restaurantsRoute);
 app.use("/api/beds", bedRoutes);
 app.use("/api/bookings", bookingRoutes);
+app.use("/api/reviews", reviewRoute);
 
 
 
@@ -76,3 +77,4 @@ app.listen(8800, () => {
     connect();
     console.log("Connected to backend!");
 });
+

@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import New from "./pages/new/New";
+import New from "./pages/new/new";
 import { userInputs, roomInputs } from "./formSource";
 
 function App() {

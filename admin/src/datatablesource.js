@@ -1,5 +1,7 @@
+import { Link } from "react-router-dom";
+import axios from "axios";
+
 export const userColumns = [
-  { field: "_id", headerName: "ID", width: 70 },
   {
     field: "name",
     headerName: "Name",
@@ -36,7 +38,6 @@ export const userColumns = [
 ];
 
 export const hostelColumns = [
-  { field: "_id", headerName: "ID", width: 250 },
   {
     field: "name",
     headerName: "Hostel Name",
@@ -81,8 +82,13 @@ export const hostelColumns = [
   },
   {
     field: "distanceFromCollege",
-    headerName: "Distance (km)",
+    headerName: "Distance (m)",
     width: 130,
+    renderCell: (params) => (
+      <div>
+        {(params.row.distanceFromCollege * 1000).toFixed(0)}
+      </div>
+    ),
   },
   {
     field: "contact",
@@ -93,12 +99,6 @@ export const hostelColumns = [
     field: "ownerName",
     headerName: "Owner Name",
     width: 150,
-  },
-  {
-    field: "pricing",
-    headerName: "Pricing (₹)",
-    width: 120,
-    renderCell: (params) => <strong>₹{params.row.pricing}</strong>,
   },
   {
     field: "viewRooms",
@@ -117,65 +117,61 @@ export const roomColumns = [
   {
     field: "roomNumber",
     headerName: "Room Number",
-    width: 150,
+    width: 130,
   },
   {
     field: "hostelID",
     headerName: "Hostel ID",
-    width: 250,
+    width: 130,
   },
   {
-    field: "roomType",
-    headerName: "Type",
+    field: "occupiedBeds",
+    headerName: "Occupied Beds",
     width: 100,
   },
   {
     field: "totalBeds",
     headerName: "Total Beds",
-    width: 120,
+    width: 100,
+  }
+];
+
+export const restaurantColumns = [
+  {
+    field: "name",
+    headerName: "Restaurant Name",
+    width: 300,
+    renderCell: (params) => {
+      return (
+        <div className="cellWithImg">
+          <img 
+            className="cellImg" 
+            src={params.row.image || "https://icon-library.com/images/no-image-icon/no-image-icon-0.jpg"} 
+            alt="restaurant" 
+          />
+          {params.row.name}
+        </div>
+      );
+    },
   },
   {
-    field: "occupiedBeds",
-    headerName: "Occupied Beds",
-    width: 120,
-    renderCell: (params) => (
-      <div className="occupiedBeds">
-        {params.row.occupiedBeds || 0} / {params.row.totalBeds}
-      </div>
-    ),
-  },
-  {
-    field: "isAvailable",
-    headerName: "Status",
-    width: 120,
-    renderCell: (params) => (
-      <div className={`status ${params.row.isAvailable ? "available" : "occupied"}`}>
-        {params.row.isAvailable ? "Available" : "Occupied"}
-      </div>
-    ),
-  },
-  {
-    field: "price",
-    headerName: "Price (₹)",
-    width: 130,
-    renderCell: (params) => <strong>₹{params.row.price}</strong>,
-  },
-  {
-    field: "updateStatus",
-    headerName: "Status",
+    field: "distance",
+    headerName: "Distance",
     width: 150,
+  },
+  {
+    field: "deliveryAvailable",
+    headerName: "Delivery",
+    width: 130,
     renderCell: (params) => (
-      <select 
-        className="statusSelect"
-        value={params.row.isAvailable ? "available" : "occupied"}
-        onChange={(e) => {
-          const isAvailable = e.target.value === "available";
-          params.row.onUpdateStatus(params.row._id, isAvailable);
-        }}
-      >
-        <option value="available">Available</option>
-        <option value="occupied">Occupied</option>
-      </select>
+      <div className={`status ${params.row.deliveryAvailable ? "active" : "inactive"}`}>
+        {params.row.deliveryAvailable ? "Available" : "Not Available"}
+      </div>
     ),
   },
+  {
+    field: "contactNumber",
+    headerName: "Contact",
+    width: 150,
+  }
 ];

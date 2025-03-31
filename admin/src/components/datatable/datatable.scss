@@ -27,7 +27,7 @@
 
           &:focus {
             outline: none;
-            border-color: #1976d2;
+            border-color: #2b41ed;
             box-shadow: 0 0 0 2px rgba(25, 118, 210, 0.1);
           }
 
@@ -53,7 +53,7 @@
 
       .link {
         padding: 8px 16px;
-        background-color: #1976d2;
+        background-color: #475be8;
         color: white;
         border-radius: 4px;
         text-decoration: none;
@@ -61,7 +61,7 @@
         transition: all 0.2s ease;
 
         &:hover {
-          background-color: #1565c0;
+          background-color: #475be8;
         }
       }
     }
@@ -70,47 +70,43 @@
   .cellWithImg {
     display: flex;
     align-items: center;
-    gap: 10px;
 
     .cellImg {
       width: 40px;
       height: 40px;
-      border-radius: 8px;
+      border-radius: 50%;
       object-fit: cover;
-      border: 1px solid #e0e0e0;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      margin-right: 10px;
     }
   }
 
   .viewRoomsButton {
     padding: 6px 12px;
     border-radius: 4px;
-    background-color: #007bff;
+    background-color: #475be8;
     color: white;
     cursor: pointer;
     font-size: 14px;
     transition: all 0.3s ease;
 
     &:hover {
-      background-color: #0056b3;
+      background-color: #475be8;
       transform: translateY(-1px);
     }
   }
 
   .status {
-    padding: 4px 8px;
-    border-radius: 4px;
-    font-size: 14px;
-    font-weight: 500;
-
-    &.available {
-      background-color: rgba(40, 167, 69, 0.1);
-      color: #28a745;
+    padding: 5px 10px;
+    border-radius: 5px;
+    
+    &.active {
+      color: green;
+      background-color: rgba(0, 128, 0, 0.151);
     }
-
-    &.occupied {
-      background-color: rgba(220, 53, 69, 0.1);
-      color: #dc3545;
+    
+    &.inactive {
+      color: crimson;
+      background-color: rgba(255, 0, 0, 0.151);
     }
   }
 
@@ -193,41 +189,30 @@
 
   .cellAction {
     display: flex;
-    gap: 10px;
-
-    .viewButton {
-      padding: 2px 5px;
-      border-radius: 5px;
-      color: darkblue;
-      border: 1px dotted rgba(0, 0, 139, 0.596);
-      cursor: pointer;
-
-      &:hover {
-        background-color: rgba(0, 0, 139, 0.1);
-      }
-    }
+    align-items: center;
+    gap: 15px;
 
     .updateButton {
-      padding: 2px 5px;
+      padding: 5px 10px;
       border-radius: 5px;
-      color: darkgreen;
-      border: 1px dotted rgba(0, 100, 0, 0.596);
+      color: darkblue;
+      border: 1px solid rgba(0, 0, 139, 0.596);
       cursor: pointer;
 
       &:hover {
-        background-color: rgba(0, 100, 0, 0.1);
+        background-color: rgba(0, 0, 139, 0.151);
       }
     }
 
     .deleteButton {
-      padding: 2px 5px;
+      padding: 5px 10px;
       border-radius: 5px;
       color: crimson;
-      border: 1px dotted rgba(220, 20, 60, 0.6);
+      border: 1px solid rgba(220, 20, 60, 0.6);
       cursor: pointer;
 
       &:hover {
-        background-color: rgba(220, 20, 60, 0.1);
+        background-color: rgba(255, 0, 0, 0.151);
       }
     }
   }
@@ -281,10 +266,10 @@
     }
 
     .viewRoomsButton {
-      background-color: #0d6efd;
+      background-color: #475be8;
 
       &:hover {
-        background-color: #0a58ca;
+        background-color: #475be8;
       }
     }
 
@@ -383,5 +368,19 @@
     max-width: 90%;
     max-height: 90vh;
     overflow-y: auto;
+  }
+}
+
+.locationLink {
+  color: #475be8;
+  text-decoration: none;
+  padding: 5px 10px;
+  border: 1px solid #475be8;
+  border-radius: 5px;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background-color: #475be8;
+    color: white;
   }
 }

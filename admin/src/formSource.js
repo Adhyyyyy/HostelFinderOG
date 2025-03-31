@@ -35,3 +35,48 @@ export const userInputs = [
   { id: "password", label: "Password", type: "password", placeholder: "Minimum 6 characters", required: true },
   { id: "isAdmin", label: "Admin User", type: "checkbox", required: false }
 ];
+
+export const restaurantInputs = [
+  { 
+    id: "name", 
+    label: "Restaurant Name", 
+    type: "text", 
+    placeholder: "Enter restaurant name",
+    required: true 
+  },
+  { 
+    id: "distance", 
+    label: "Distance from College", 
+    type: "text", 
+    placeholder: "Enter distance",
+    required: true 
+  },
+  { 
+    id: "contactNumber", 
+    label: "Contact Number", 
+    type: "text", 
+    placeholder: "Enter contact number",
+    pattern: "[0-9]{10}",
+    required: true 
+  },
+  { 
+    id: "deliveryAvailable", 
+    label: "Delivery Available", 
+    type: "checkbox",
+    required: false 
+  },
+  {
+    id: "location.latitude",
+    label: "Latitude",
+    type: "number",
+    placeholder: "Enter latitude",
+    required: true
+  },
+  {
+    id: "location.longitude",
+    label: "Longitude",
+    type: "number",
+    placeholder: "Enter longitude",
+    required: true
+  }
+];

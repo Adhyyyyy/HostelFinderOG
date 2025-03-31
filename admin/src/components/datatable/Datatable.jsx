@@ -4,7 +4,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState, useMemo } from "react";
 import useFetch from "../../hooks/useFetch";
 import axios from "../../axios";
-import { userColumns, hostelColumns, roomColumns } from "../../datatablesource";
+import { userColumns, hostelColumns, roomColumns, restaurantColumns } from "../../datatablesource";
 import BedManagement from "../bedManagement/BedManagement";
 
 const Datatable = ({ columns }) => {
@@ -76,6 +76,8 @@ const Datatable = ({ columns }) => {
           return item.roomNumber.toLowerCase().includes(query);
         case "users":
           return item.name.toLowerCase().includes(query);
+        case "restaurants":
+          return item.name.toLowerCase().includes(query);
         default:
           return true;
       }
@@ -90,6 +92,8 @@ const Datatable = ({ columns }) => {
         return hostelColumns;
       case "rooms":
         return roomColumns;
+      case "restaurants":
+        return restaurantColumns;
       default:
         return columns || [];
     }
@@ -114,6 +118,7 @@ const Datatable = ({ columns }) => {
     }
   };
 
+  // Only add actionColumn for non-restaurant tables
   const actionColumn = [
     {
       field: "action",
@@ -121,12 +126,6 @@ const Datatable = ({ columns }) => {
       width: 300,
       renderCell: (params) => (
         <div className="cellAction">
-          <div
-            className="viewButton"
-            onClick={() => setSelectedRoom(params.row._id)}
-          >
-            View Beds
-          </div>
           <div
             className="updateButton"
             onClick={() => navigate(`/${path}/update/${params.row._id}`)}
@@ -149,6 +148,9 @@ const Datatable = ({ columns }) => {
       ),
     },
   ];
+
+  // Replace with this line to always include action buttons
+  const finalColumns = columns.concat(actionColumn);
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error loading data.</div>;
@@ -192,23 +194,12 @@ const Datatable = ({ columns }) => {
       <DataGrid
         className="datagrid"
         rows={filteredList}
-        columns={selectedColumns.concat(actionColumn)}
+        columns={finalColumns}
         pageSize={9}
         rowsPerPageOptions={[9]}
         checkboxSelection
         getRowId={(row) => row._id}
       />
-
-      {selectedRoom && (
-        <div className="modal">
-          <div className="modalContent">
-            <BedManagement 
-              roomId={selectedRoom} 
-              onClose={() => setSelectedRoom(null)}
-            />
-          </div>
-        </div>
-      )}
     </div>
   );
 };

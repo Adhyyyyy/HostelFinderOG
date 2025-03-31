@@ -1,19 +1,11 @@
 import "./sidebar.scss";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
-import LocalShippingIcon from "@mui/icons-material/LocalShipping";
-import CreditCardIcon from "@mui/icons-material/CreditCard";
-import StoreIcon from "@mui/icons-material/Store";
-import InsertChartIcon from "@mui/icons-material/InsertChart";
-import SettingsApplicationsIcon from "@mui/icons-material/SettingsApplications";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
-import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
-import SettingsSystemDaydreamOutlinedIcon from "@mui/icons-material/SettingsSystemDaydreamOutlined";
-import PsychologyOutlinedIcon from "@mui/icons-material/PsychologyOutlined";
-import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
 import HotelIcon from '@mui/icons-material/Hotel';
 import LocalHotelIcon from '@mui/icons-material/LocalHotel';
-import { Link } from "react-router-dom";
+import RestaurantIcon from '@mui/icons-material/Restaurant';
+import { Link, useNavigate } from "react-router-dom";
 import { DarkModeContext } from "../../context/darkModeContext";
 import { useContext } from "react";
 import { AuthContext } from "../../context/AuthContext";
@@ -21,9 +13,12 @@ import { AuthContext } from "../../context/AuthContext";
 const Sidebar = () => {
   const { dispatch } = useContext(DarkModeContext);
   const { dispatch: authDispatch } = useContext(AuthContext);
+  const navigate = useNavigate();
 
   const handleLogout = () => {
     authDispatch({ type: "LOGOUT" });
+    
+    window.location.href = "http://localhost:3000/";
   };
 
   return (
@@ -66,14 +61,12 @@ const Sidebar = () => {
               <span>Beds</span>
             </li>
           </Link>
-          <li>
-            <NotificationsNoneIcon className="icon" />
-            <span>Notifications</span>
-          </li>
-          <li>
-            <AccountCircleOutlinedIcon className="icon" />
-            <span>Profile</span>
-          </li>
+          <Link to="/restaurants" style={{ textDecoration: "none" }}>
+            <li>
+              <RestaurantIcon className="icon" />
+              <span>Restaurants</span>
+            </li>
+          </Link>
           <li onClick={handleLogout}>
             <ExitToAppIcon className="icon" />
             <span>Logout</span>

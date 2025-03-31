@@ -26,7 +26,7 @@ export const login = async (req, res, next) => {
     try {
         console.log("Login attempt with:", req.body);
         
-        const user = await User.findOne({ name: req.body.name });
+        const user = await User.findOne({ email: req.body.email });
         console.log("User found:", user ? "Yes" : "No");
         
         if (!user) {
@@ -41,12 +41,14 @@ export const login = async (req, res, next) => {
         
         if (!isPasswordCorrect) {
             console.log("Incorrect password!");
-            return next(createError(400, "Wrong password or name!"));
+            return next(createError(400, "Wrong password or email!"));
         }
 
-        // Add this check
-        console.log("Is user admin?", user.isAdmin);
-        
+        if (!user.isAdmin) {
+            console.log("User is not an admin!");
+            return next(createError(403, "Access denied. Admin only."));
+        }
+
         const token = jwt.sign(
             { id: user._id, isAdmin: user.isAdmin },
             process.env.JWT_SECRET
@@ -57,6 +59,8 @@ export const login = async (req, res, next) => {
         res
         .cookie("access_token", token, {
             httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "strict",
         })
         .status(200)
         .json({ details: { ...otherDetails }, isAdmin: user.isAdmin });
