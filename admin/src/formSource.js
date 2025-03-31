@@ -1,41 +1,37 @@
 export const hostelInputs = [
-  { id: "name", label: "Hostel Name", type: "text", placeholder: "Enter hostel name", required: true },
-  { id: "category", label: "Category", type: "select", options: ["Hostel", "PG"], required: true },
-  { id: "genderType", label: "Gender Type", type: "select", options: ["Boys", "Girls"], required: true },
-  { id: "distanceFromCollege", label: "Distance from College (m)", type: "number", placeholder: "500", required: true },
-  { id: "address", label: "Address", type: "text", placeholder: "Enter full address", required: true },
-  { id: "vacancy", label: "Vacancy", type: "number", placeholder: "Number of available beds", required: true },
-  { id: "capacity", label: "Capacity", type: "number", placeholder: "Total number of beds", required: true },
-  { id: "pricing", label: "Pricing (₹ per month)", type: "number", placeholder: "5000", required: true },
-  { id: "contact", label: "Hostel Contact", type: "text", placeholder: "9876543210", required: true },
-  
-  // ✅ Fixed `owner` fields
-  { id: "owner.name", label: "Owner Name", type: "text", placeholder: "John Doe", required: true },
-  { id: "owner.contact", label: "Owner Contact", type: "text", placeholder: "9876543210", required: true },
-  
-  // ✅ Fixed `location` fields
+  { id: "name", label: "Name", type: "text", placeholder: "Enter hostel name", required: true },
+  { id: "category", label: "Category", type: "select", placeholder: "Select category", options: ["Hostel", "PG"], required: true },
+  { id: "genderType", label: "Gender Type", type: "select", placeholder: "Select gender type", options: ["Boys", "Girls"], required: true },
+  {
+    id: "distanceFromCollege",
+    label: "Distance from College (in meters)",
+    type: "number",
+    placeholder: "Enter distance in meters",
+    required: true
+  },
+  { id: "address", label: "Address", type: "text", placeholder: "Enter address", required: true },
+  { id: "vacancy", label: "Vacancy", type: "number", placeholder: "Enter vacancy", required: true },
+  { id: "capacity", label: "Capacity", type: "number", placeholder: "Enter capacity", required: true },
+  { id: "contact", label: "Contact", type: "text", placeholder: "Enter contact number", pattern: "[0-9]{10}", required: true },
+  { id: "ownerName", label: "Owner Name", type: "text", placeholder: "Enter owner name", required: true },
+  { id: "ownerContact", label: "Owner Contact", type: "text", placeholder: "Enter owner contact number", pattern: "[0-9]{10}", required: false },
   { id: "location.lat", label: "Latitude", type: "number", placeholder: "Enter latitude", required: true },
   { id: "location.lng", label: "Longitude", type: "number", placeholder: "Enter longitude", required: true },
-  
-  { id: "amenities", label: "Amenities", type: "text", placeholder: "WiFi, Laundry, Parking" },
-  { id: "messAvailable", label: "Mess Available?", type: "checkbox" },
-  { id: "rules", label: "Rules", type: "text", placeholder: "No smoking, No loud music" }
+  { id: "messType", label: "Mess Available", type: "checkbox", required: false },
+  { id: "photos", label: "Hostel Image", type: "image", required: true }
 ];
 
-
-
 export const roomInputs = [
-  { id: "roomID", label: "Room ID", type: "text", placeholder: "Unique room identifier" },
-  { id: "roomNumber", label: "Room Number", type: "text", placeholder: "101" },
-  { id: "roomType", label: "Room Type", type: "select", options: ["Single", "Double", "Triple", "Quad", "Five", "Six"] },
-  { id: "totalBeds", label: "Total Beds", type: "number", placeholder: "2" },
-  { id: "price", label: "Price per Month (₹)", type: "number", placeholder: "5000" }
+  { id: "roomNumber", label: "Room Number", type: "text", placeholder: "Enter room number", required: true },
+  { id: "roomType", label: "Room Type", type: "select", options: ["Single", "Double", "Triple", "Quad", "Five", "Six"], required: true },
+  { id: "price", label: "Price (₹)", type: "number", placeholder: "Enter room price", required: true },
+  { id: "isAvailable", label: "Available", type: "checkbox", required: true }
 ];
 
 export const userInputs = [
-  { id: "name", label: "Full Name", type: "text", placeholder: "John Doe" },
-  { id: "email", label: "Email", type: "email", placeholder: "johndoe@gmail.com" },
-  { id: "phone", label: "Phone Number", type: "text", placeholder: "9876543210" },
-  { id: "password", label: "Password", type: "password" },
-  { id: "isAdmin", label: "Admin User", type: "checkbox" }
+  { id: "name", label: "Full Name", type: "text", placeholder: "John Doe", required: true },
+  { id: "email", label: "Email", type: "email", placeholder: "john_doe@gmail.com", required: true },
+  { id: "phone", label: "Phone Number", type: "text", placeholder: "9876543210", required: true },
+  { id: "password", label: "Password", type: "password", placeholder: "Minimum 6 characters", required: true },
+  { id: "isAdmin", label: "Admin User", type: "checkbox", required: false }
 ];

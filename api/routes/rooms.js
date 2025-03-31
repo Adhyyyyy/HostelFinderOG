@@ -2,11 +2,12 @@ import express from "express";
 import { 
   createRoom, 
   updateRoom, 
-  updateRoomAvailability, 
+  updateRoomStatus,
   deleteRoom, 
   getRoom, 
   getRooms, 
-  getRoomsByHostel
+  getRoomsByHostel, // ✅ Import new function
+  updateBedStatus
 } from "../controllers/room.js";
 
 const router = express.Router();
@@ -20,10 +21,10 @@ router.post("/:hostelid", createRoom);
 // Update Room
 router.put("/:id", updateRoom);
 
-// Update Room Availability
-router.put("/availability/:id", updateRoomAvailability);
+// Update Room Status
+router.put("/status/:id", updateRoomStatus);
 
-// Delete Room (Updated to use :id/:hostelid)
+// Delete Room
 router.delete("/:id/:hostelid", deleteRoom);
 
 // Get Single Room
@@ -32,4 +33,7 @@ router.get("/:id", getRoom);
 // Get All Rooms (With Filtering)
 router.get("/", getRooms);
 
-export default router;
+// Add this new route
+router.put("/:roomId/bed/:bedIndex", updateBedStatus);
+
+export default router;  // ✅ Only one export default

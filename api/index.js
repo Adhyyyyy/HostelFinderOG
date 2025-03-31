@@ -8,6 +8,8 @@ import roomsRoute from "./routes/rooms.js";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import restaurantsRoute from "./routes/restaurants.js";  
+import bedRoutes from "./routes/beds.js";
+import bookingRoutes from "./routes/bookings.js";
 
 dotenv.config();
 
@@ -28,9 +30,12 @@ mongoose.connection.on("disconnected", () => {
 
 //middlewares
 app.use(cors({
-    origin: "http://localhost:3000", // Allow requests from frontend
-    credentials: true // Allow cookies & authentication headers
+    origin: ["http://localhost:3000", "http://localhost:3001"], // Allow frontend URLs
+    credentials: true, // Allow cookies & authentication headers
+    methods: ["GET", "POST", "PUT", "DELETE"], // Allow specific methods
+    allowedHeaders: ["Content-Type", "Authorization"], // Allow custom headers
 }));
+
 
 app.use(cookieParser());
 app.use(express.json());
@@ -40,6 +45,8 @@ app.use("/api/users", usersRoute);
 app.use("/api/hostel", hostelRoute);
 app.use("/api/rooms", roomsRoute);
 app.use("/api/restaurants", restaurantsRoute);
+app.use("/api/beds", bedRoutes);
+app.use("/api/bookings", bookingRoutes);
 
 
 
@@ -54,6 +61,16 @@ app.use((err,req,res,next)=>{
     });
 })
 
+// Add this after your mongoose.connect()
+mongoose.connection.on('connected', async () => {
+  try {
+    // Drop existing indexes
+    await mongoose.connection.collections['rooms']?.dropIndexes();
+    console.log('Dropped existing indexes');
+  } catch (err) {
+    console.log('No existing indexes to drop');
+  }
+});
 
 app.listen(8800, () => {
     connect();

@@ -4,19 +4,19 @@ import { verifyAdmin, verifyToken, verifyUser } from "../utils/verifyToken.js";
 
 const router = express.Router();
 
-// ✅ Add a route to create a user
+
 router.post("/", createUser);
 
-// ✅ Update user
-router.put("/:id", verifyUser, updateUser);
 
-// ✅ Delete user
-router.delete("/:id", verifyUser, deleteUser);
+router.put("/:id",  updateUser);
 
-// ✅ Get single user
-router.get("/:id", verifyUser, getUser);
 
-// ✅ Get all users (only admin can access)
-router.get("/", verifyAdmin, getUsers);
+router.delete("/:id",  deleteUser);
+
+
+router.get("/:id",  getUser);
+
+
+router.get("/", getUsers);
 
 export default router;

@@ -41,6 +41,18 @@ export const hostelColumns = [
     field: "name",
     headerName: "Hostel Name",
     width: 200,
+    renderCell: (params) => {
+      return (
+        <div className="cellWithImg">
+          <img 
+            className="cellImg" 
+            src={params.row.photos && params.row.photos[0] || "https://icon-library.com/images/no-image-icon/no-image-icon-0.jpg"} 
+            alt="hostel" 
+          />
+          {params.row.name}
+        </div>
+      );
+    },
   },
   {
     field: "category",
@@ -88,6 +100,16 @@ export const hostelColumns = [
     width: 120,
     renderCell: (params) => <strong>₹{params.row.pricing}</strong>,
   },
+  {
+    field: "viewRooms",
+    headerName: "Rooms",
+    width: 120,
+    renderCell: (params) => (
+      <div className="viewRoomsButton" onClick={() => params.row.onViewRooms(params.row._id)}>
+        View Rooms
+      </div>
+    ),
+  },
 ];
 
 export const roomColumns = [
@@ -113,9 +135,47 @@ export const roomColumns = [
     width: 120,
   },
   {
+    field: "occupiedBeds",
+    headerName: "Occupied Beds",
+    width: 120,
+    renderCell: (params) => (
+      <div className="occupiedBeds">
+        {params.row.occupiedBeds || 0} / {params.row.totalBeds}
+      </div>
+    ),
+  },
+  {
+    field: "isAvailable",
+    headerName: "Status",
+    width: 120,
+    renderCell: (params) => (
+      <div className={`status ${params.row.isAvailable ? "available" : "occupied"}`}>
+        {params.row.isAvailable ? "Available" : "Occupied"}
+      </div>
+    ),
+  },
+  {
     field: "price",
     headerName: "Price (₹)",
     width: 130,
     renderCell: (params) => <strong>₹{params.row.price}</strong>,
+  },
+  {
+    field: "updateStatus",
+    headerName: "Status",
+    width: 150,
+    renderCell: (params) => (
+      <select 
+        className="statusSelect"
+        value={params.row.isAvailable ? "available" : "occupied"}
+        onChange={(e) => {
+          const isAvailable = e.target.value === "available";
+          params.row.onUpdateStatus(params.row._id, isAvailable);
+        }}
+      >
+        <option value="available">Available</option>
+        <option value="occupied">Occupied</option>
+      </select>
+    ),
   },
 ];

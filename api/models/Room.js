@@ -1,15 +1,45 @@
 import mongoose from "mongoose";
 
-const roomSchema = new mongoose.Schema(
-  {
-    roomID: { type: String, required: true, unique: true },
-    hostelID: { type: mongoose.Schema.Types.ObjectId, ref: "Hostel", required: true },
-    roomNumber: { type: String, required: true, unique: true }, 
-    roomType: { type: String, enum: ["Single", "Double", "Triple", "Quad", "Five", "Six"], required: true },
-    totalBeds: { type: Number, required: true },
-    price: { type: Number, required: true }
+const RoomSchema = new mongoose.Schema({
+  roomNumber: {
+    type: String,
+    required: true,
+    trim: true
   },
-  { timestamps: true }
-);
+  roomType: {
+    type: String,
+    required: true
+  },
+  price: {
+    type: Number,
+    required: true,
+    min: 0
+  },
+  hostelID: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Hostel",
+    required: true
+  },
+  isAvailable: {
+    type: Boolean,
+    default: true
+  }
+}, { timestamps: true });
 
-export default mongoose.model("Room", roomSchema);
+// First, ensure we're working with a clean slate
+if (mongoose.connection.models['Room']) {
+  delete mongoose.connection.models['Room'];
+}
+
+// Drop any existing indexes
+mongoose.connection.collections['rooms']?.dropIndexes();
+
+// Create a compound unique index for roomNumber and hostelID
+RoomSchema.index({ roomNumber: 1, hostelID: 1 }, { unique: true });
+
+const Room = mongoose.model("Room", RoomSchema);
+
+// Ensure indexes are created
+Room.createIndexes();
+
+export default Room;

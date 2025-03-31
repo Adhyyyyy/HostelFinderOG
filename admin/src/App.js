@@ -1,17 +1,19 @@
-import Home from "./pages/home/Home";
 import Login from "./pages/login/Login";
 import List from "./pages/list/List";
-import Single from "./pages/single/Single";
-import New from "./pages/new/New";
+import New from "./pages/new/new";
+import Update from "./pages/update/Update";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { productInputs, userInputs } from "./formSource";
+import { userInputs, hostelInputs, roomInputs } from "./formSource";
 import "./style/dark.scss";
 import { useContext } from "react";
 import { DarkModeContext } from "./context/darkModeContext";
 import { AuthContext } from "./context/AuthContext";
 import { hostelColumns, roomColumns, userColumns } from "./datatablesource";
-import NewHotel from "./pages/newHostel/NewHostel";
+import NewHostel from "./pages/newHostel/NewHostel";
 import NewRoom from "./pages/newRoom/NewRoom";
+import Home from "./pages/home/Home";
+import Beds from "./pages/beds/Beds";
+import BedManagement from "./pages/bedManagement/BedManagement";
 
 function App() {
   const { darkMode } = useContext(DarkModeContext);
@@ -32,15 +34,13 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/">
+            <Route index element={
+              <ProtectedRoute>
+                <Home />
+              </ProtectedRoute>
+            } />
             <Route path="login" element={<Login />} />
-            <Route
-              index
-              element={
-                <ProtectedRoute>
-                  <Home />
-                </ProtectedRoute>
-              }
-            />
+           
             {/* Users Route */}
             <Route path="users">
               <Route
@@ -51,19 +51,20 @@ function App() {
                   </ProtectedRoute>
                 }
               />
-              <Route
-                path=":userId"
-                element={
-                  <ProtectedRoute>
-                    <Single />
-                  </ProtectedRoute>
-                }
-              />
+             
               <Route
                 path="new"
                 element={
                   <ProtectedRoute>
                     <New inputs={userInputs} title="Add New User" />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="update/:id"
+                element={
+                  <ProtectedRoute>
+                    <Update inputs={userInputs} />
                   </ProtectedRoute>
                 }
               />
@@ -78,23 +79,25 @@ function App() {
                   </ProtectedRoute>
                 }
               />
+             
               <Route
-                path=":hostelId"
+                path="update/:id"
                 element={
                   <ProtectedRoute>
-                    <Single />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="new"
-                element={
-                  <ProtectedRoute>
-                    <NewHotel />
+                    <Update inputs={hostelInputs} />
                   </ProtectedRoute>
                 }
               />
             </Route>
+            {/* New Hostel Route - Standalone */}
+            <Route
+              path="hostel/new"
+              element={
+                <ProtectedRoute>
+                  <NewHostel />
+                </ProtectedRoute>
+              }
+            />
             {/* Rooms Route */}
             <Route path="rooms">
               <Route
@@ -105,19 +108,30 @@ function App() {
                   </ProtectedRoute>
                 }
               />
-              <Route
-                path=":roomId"
-                element={
-                  <ProtectedRoute>
-                    <Single />
-                  </ProtectedRoute>
-                }
-              />
+             
               <Route
                 path="new"
                 element={
                   <ProtectedRoute>
                     <NewRoom />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="update/:id"
+                element={
+                  <ProtectedRoute>
+                    <Update inputs={roomInputs} />
+                  </ProtectedRoute>
+                }
+              />
+            </Route>
+            <Route path="beds">
+              <Route
+                index
+                element={
+                  <ProtectedRoute>
+                    <Beds />
                   </ProtectedRoute>
                 }
               />

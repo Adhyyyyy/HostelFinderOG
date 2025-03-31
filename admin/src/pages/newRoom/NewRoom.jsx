@@ -1,78 +1,199 @@
-import "./newRoom.scss";
+import "../../styles/form.scss";
 import Sidebar from "../../components/sidebar/Sidebar";
 import Navbar from "../../components/navbar/Navbar";
-import DriveFolderUploadOutlinedIcon from "@mui/icons-material/DriveFolderUploadOutlined";
-import { useState } from "react";
-import { roomInputs } from "../../formSource";
-import useFetch from "../../hooks/useFetch";
+import { useState, useEffect } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
+
+// Add this after your imports to check axios configuration
+axios.interceptors.request.use(request => {
+  console.log('Starting Request:', {
+    url: request.url,
+    method: request.method,
+    data: request.data
+  });
+  return request;
+});
+
+axios.interceptors.response.use(
+  response => {
+    console.log('Response:', response);
+    return response;
+  },
+  error => {
+    console.log('Response Error:', {
+      message: error.message,
+      response: error.response?.data
+    });
+    return Promise.reject(error);
+  }
+);
 
 const NewRoom = () => {
-  const [info, setInfo] = useState({});
-  const [hotelId, setHotelId] = useState(undefined);
-  const [rooms, setRooms] = useState([]);
+  const [info, setInfo] = useState({
+    roomNumber: "",
+    roomType: "",
+    price: "",
+    isAvailable: true
+  });
+  const [hostels, setHostels] = useState([]);
+  const [selectedHostel, setSelectedHostel] = useState("");
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
-  const { data, loading, error } = useFetch("/hotels");
+  // Room type options
+  const roomTypes = ["Single", "Double", "Triple", "Quad", "Five", "Six"];
+
+  // Fetch hostels for the dropdown
+  useEffect(() => {
+    const fetchHostels = async () => {
+      try {
+        const response = await axios.get("/hostel");
+        setHostels(response.data);
+      } catch (error) {
+        console.error("Error fetching hostels:", error);
+        alert("Error fetching hostels");
+      }
+    };
+    fetchHostels();
+  }, []);
 
   const handleChange = (e) => {
-    setInfo((prev) => ({ ...prev, [e.target.id]: e.target.value }));
+    const { id, value, type, checked } = e.target;
+    setInfo(prev => ({
+      ...prev,
+      [id]: type === "checkbox" ? checked : value
+    }));
   };
 
-  const handleClick = async (e) => {
+  const handleHostelSelect = (e) => {
+    setSelectedHostel(e.target.value);
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const roomNumbers = rooms.split(",").map((room) => ({ number: room }));
+    setLoading(true);
+
     try {
-      await axios.post(`/rooms/${hotelId}`, { ...info, roomNumbers });
+      if (!selectedHostel) {
+        throw new Error("Please select a hostel");
+      }
+
+      if (!info.roomNumber || !info.roomType || !info.price) {
+        throw new Error("Please fill all required fields");
+      }
+
+      // Only send the required fields
+      const roomData = {
+        roomNumber: String(info.roomNumber).trim(),
+        roomType: info.roomType,
+        price: Number(info.price),
+        isAvailable: info.isAvailable
+      };
+
+      const response = await axios.post(`/rooms/${selectedHostel}`, roomData);
+
+      if (response.data.success) {
+        alert("Room created successfully!");
+        navigate("/rooms");
+      } else {
+        throw new Error(response.data.message || "Failed to create room");
+      }
     } catch (err) {
-      console.log(err);
+      console.error("Creation failed:", err);
+      alert(err.response?.data?.message || err.message || "Failed to create room");
+    } finally {
+      setLoading(false);
     }
   };
 
-  console.log(info)
   return (
     <div className="new">
       <Sidebar />
       <div className="newContainer">
         <Navbar />
-        <div className="top">
-          <h1>Add New Room</h1>
-        </div>
-        <div className="bottom">
-          <div className="right">
-            <form>
-              {roomInputs.map((input) => (
-                <div className="formInput" key={input.id}>
-                  <label>{input.label}</label>
-                  <input
-                    id={input.id}
-                    type={input.type}
-                    placeholder={input.placeholder}
-                    onChange={handleChange}
-                  />
-                </div>
-              ))}
+        <div className="form">
+          <div className="formContainer">
+            <h1>Add New Room</h1>
+            <form onSubmit={handleSubmit}>
+              {/* Hostel Selection */}
               <div className="formInput">
-                <label>Rooms</label>
-                <textarea
-                  onChange={(e) => setRooms(e.target.value)}
-                  placeholder="give comma between room numbers."
-                />
-              </div>
-              <div className="formInput">
-                <label>Choose a hotel</label>
+                <label>Select Hostel *</label>
                 <select
-                  id="hotelId"
-                  onChange={(e) => setHotelId(e.target.value)}
+                  value={selectedHostel}
+                  onChange={handleHostelSelect}
+                  required
                 >
-                  {loading
-                    ? "loading"
-                    : data &&
-                      data.map((hotel) => (
-                        <option key={hotel._id} value={hotel._id}>{hotel.name}</option>
-                      ))}
+                  <option value="">Select a hostel</option>
+                  {hostels.map((hostel) => (
+                    <option key={hostel._id} value={hostel._id}>
+                      {hostel.name}
+                    </option>
+                  ))}
                 </select>
               </div>
-              <button onClick={handleClick}>Send</button>
+
+              {/* Room Number */}
+              <div className="formInput">
+                <label>Room Number *</label>
+                <input
+                  type="text"
+                  id="roomNumber"
+                  value={info.roomNumber}
+                  onChange={handleChange}
+                  placeholder="Enter room number"
+                  required
+                />
+              </div>
+
+              {/* Room Type */}
+              <div className="formInput">
+                <label>Room Type *</label>
+                <select
+                  id="roomType"
+                  value={info.roomType}
+                  onChange={handleChange}
+                  required
+                >
+                  <option value="">Select room type</option>
+                  {roomTypes.map((type) => (
+                    <option key={type} value={type}>
+                      {type}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Price */}
+              <div className="formInput">
+                <label>Price (₹) *</label>
+                <input
+                  type="number"
+                  id="price"
+                  value={info.price}
+                  onChange={handleChange}
+                  placeholder="Enter room price"
+                  required
+                  min="0"
+                />
+              </div>
+
+              {/* Availability */}
+              <div className="formInput">
+                <div className="checkbox-container">
+                  <input
+                    type="checkbox"
+                    id="isAvailable"
+                    checked={info.isAvailable}
+                    onChange={handleChange}
+                  />
+                  <label>Available</label>
+                </div>
+              </div>
+
+              <button type="submit" disabled={loading}>
+                {loading ? "Creating..." : "Create Room"}
+              </button>
             </form>
           </div>
         </div>

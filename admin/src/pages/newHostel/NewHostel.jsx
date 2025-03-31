@@ -1,77 +1,140 @@
-import "./newHostel.scss";
+import "../../styles/form.scss";
+import { useState } from "react";
+import { hostelInputs } from "../../formSource";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 import Sidebar from "../../components/sidebar/Sidebar";
 import Navbar from "../../components/navbar/Navbar";
-import DriveFolderUploadOutlinedIcon from "@mui/icons-material/DriveFolderUploadOutlined";
-import { useState } from "react";
-import axios from "axios";
-import { hostelInputs } from "../../formSource";
 
 const NewHostel = () => {
-  const [file, setFile] = useState(null);
+  const navigate = useNavigate();
+  const [files, setFiles] = useState("");
   const [info, setInfo] = useState({
-    location: { lat: "", lng: "" }, // Ensure location object is initialized
-    owner: { name: "", contact: "" }, // Ensure owner object is initialized
+    messType: false,
+    category: "Hostel", 
+    genderType: "Boys",
+    location: { lat: 0, lng: 0 },
+    amenities: "",
+    rules: "",
+    ownerName: "",
   });
 
-  // ✅ Handle input changes dynamically, including nested fields
   const handleChange = (e) => {
     const { id, value, type, checked } = e.target;
+    
+    // Handle nested location object
+    if (id === "location.lat" || id === "location.lng") {
+      const key = id.split(".")[1];
+      setInfo(prev => ({
+        ...prev,
+        location: {
+          ...prev.location,
+          [key]: Number(value)
+        }
+      }));
+      return;
+    }
 
-    setInfo((prev) => {
-      // Handle nested fields like `location.lat`, `owner.name`
-      if (id.includes(".")) {
-        const [parent, child] = id.split(".");
-        return {
-          ...prev,
-          [parent]: {
-            ...prev[parent],
-            [child]: type === "checkbox" ? checked : value,
-          },
-        };
-      }
-      return { ...prev, [id]: type === "checkbox" ? checked : value };
-    });
+    // Handle numeric fields
+    if (["vacancy", "capacity", "distanceFromCollege"].includes(id)) {
+      setInfo(prev => ({
+        ...prev,
+        [id]: Number(value)
+      }));
+      return;
+    }
+
+    setInfo((prev) => ({
+      ...prev,
+      [id]: type === "checkbox" ? checked : value,
+    }));
   };
 
-  // ✅ Handle form submission
   const handleClick = async (e) => {
     e.preventDefault();
     try {
-      let imageUrl = "";
+      // Validate required fields
+      const requiredFields = [
+        'name',
+        'category',
+        'genderType',
+        'distanceFromCollege',
+        'address',
+        'vacancy',
+        'capacity',
+        'contact',
+        'ownerName'
+      ];
 
-      // ✅ Retrieve the authentication token (must be an admin token)
-      const token = localStorage.getItem("token"); 
-
-      // ✅ If file is selected, upload to Cloudinary
-      if (file) {
-        const data = new FormData();
-        data.append("file", file);
-        data.append("upload_preset", "upload");
-
-        const uploadRes = await axios.post(
-          "https://api.cloudinary.com/v1_1/adhy/image/upload",
-          data
-        );
-        imageUrl = uploadRes.data.secure_url;
+      for (const field of requiredFields) {
+        if (!info[field] && info[field] !== 0) {
+          throw new Error(`${field} is required`);
+        }
       }
 
-      // ✅ Create new hostel object
+      // Validate numeric fields
+      if (isNaN(info.vacancy) || info.vacancy < 0) {
+        throw new Error('Vacancy cannot be negative');
+      }
+      if (isNaN(info.capacity) || info.capacity <= 0) {
+        throw new Error('Capacity must be a positive number');
+      }
+      if (isNaN(info.distanceFromCollege) || info.distanceFromCollege < 0) {
+        throw new Error('Distance cannot be negative');
+      }
+
+      // Validate phone number
+      const phoneRegex = /^\d{10}$/;
+      if (!phoneRegex.test(info.contact)) {
+        throw new Error('Invalid contact number format (10 digits required)');
+      }
+
+      // Upload images to Cloudinary
+      if (!files || !files.length) {
+        throw new Error('At least one image is required');
+      }
+
+      const list = await Promise.all(
+        Object.values(files).map(async (file) => {
+          const data = new FormData();
+          data.append("file", file);
+          data.append("upload_preset", "upload");
+          const uploadRes = await axios.post(
+            "https://api.cloudinary.com/v1_1/adhy/image/upload",
+            data
+          );
+          const { url } = uploadRes.data;
+          return url;
+        })
+      );
+
+      // Convert amenities and rules from string to arrays
+      const amenitiesArray = info.amenities.split('\n').filter(item => item.trim());
+      const rulesArray = info.rules.split('\n').filter(item => item.trim());
+
       const newHostel = {
         ...info,
-        image: imageUrl || "https://icon-library.com/images/no-image-icon/no-image-icon-0.jpg",
+        amenities: amenitiesArray,
+        rules: rulesArray,
+        photos: list,
+        ownerContact: info.contact,
+        vacancy: Number(info.vacancy),
+        capacity: Number(info.capacity),
+        distanceFromCollege: Number(info.distanceFromCollege) // This will be in meters
       };
 
-      // ✅ Send request with Authorization header
-      await axios.post("http://localhost:8800/api/hostel", newHostel, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      console.log("Sending hostel data:", newHostel);
 
-      alert("Hostel added successfully!");
+      const response = await axios.post("/hostel", newHostel);
+      console.log("Server response:", response);
+
+      if (response.status === 200) {
+        alert("Hostel added successfully!");
+        navigate("/hostel");
+      }
     } catch (err) {
-      console.error("Error uploading hostel:", err);
-      alert("Failed to add hostel. Check console for errors.");
+      console.error("Error details:", err.response?.data || err.message);
+      alert(err.response?.data?.message || err.message || "Creation failed. Please check all required fields.");
     }
   };
 
@@ -80,48 +143,100 @@ const NewHostel = () => {
       <Sidebar />
       <div className="newContainer">
         <Navbar />
-        <div className="top">
-          <h1>Add New Hostel</h1>
-        </div>
-        <div className="bottom">
-          <div className="left">
-            <label htmlFor="file" className="uploadLabel">
-              <DriveFolderUploadOutlinedIcon className="icon" />
-            </label>
-            <input
-              type="file"
-              id="file"
-              accept="image/*"
-              onChange={(e) => setFile(e.target.files[0])}
-              style={{ display: "none" }}
-            />
-            <img
-              src={file ? URL.createObjectURL(file) : "https://icon-library.com/images/no-image-icon/no-image-icon-0.jpg"}
-              alt="Preview"
-            />
-          </div>
-          <div className="right">
-            <form>
-              {hostelInputs.map((input) => (
-                <div className="formInput" key={input.id}>
-                  <label>{input.label}</label>
-                  {input.type === "select" ? (
-                    <select id={input.id} onChange={handleChange} required>
-                      <option value="">Select {input.label}</option>
-                      {input.options.map((option) => (
-                        <option key={option} value={option}>
-                          {option}
-                        </option>
-                      ))}
-                    </select>
-                  ) : input.type === "checkbox" ? (
-                    <input type="checkbox" id={input.id} onChange={handleChange} />
-                  ) : (
-                    <input type={input.type} id={input.id} placeholder={input.placeholder} onChange={handleChange} required />
+        <div className="form">
+          <div className="formContainer">
+            <h1>Add New Hostel</h1>
+            <form onSubmit={handleClick}>
+              {/* File Upload at the top */}
+              <div className="formInput">
+                <label>Images</label>
+                <div className="image-upload-container">
+                  <input
+                    type="file"
+                    multiple
+                    onChange={(e) => setFiles(Array.from(e.target.files))}
+                    className="image-input"
+                  />
+                  {files.length > 0 && (
+                    <div className="image-preview">
+                      <img
+                        src={URL.createObjectURL(files[0])}
+                        alt="Hostel Preview"
+                      />
+                    </div>
                   )}
                 </div>
+              </div>
+
+              {/* Regular form inputs */}
+              {hostelInputs
+                .filter(input => input.id !== 'ownerContact' && input.id !== 'photos')
+                .map((input) => (
+                  <div className="formInput" key={input.id}>
+                    {input.type === "checkbox" ? (
+                      <div className="checkbox-container">
+                        <input
+                          type="checkbox"
+                          id={input.id}
+                          checked={info[input.id]}
+                          onChange={handleChange}
+                        />
+                        <label>{input.label}</label>
+                      </div>
+                    ) : (
+                      <>
+                        <label>{input.label}</label>
+                        {input.type === "select" ? (
+                          <select 
+                            id={input.id} 
+                            onChange={handleChange}
+                            required={input.required}
+                          >
+                            <option value="">Select {input.label}</option>
+                            {input.options.map(option => (
+                              <option key={option} value={option}>{option}</option>
+                            ))}
+                          </select>
+                        ) : (
+                          <input
+                            id={input.id}
+                            onChange={handleChange}
+                            type={input.type}
+                            placeholder={input.placeholder}
+                            pattern={input.pattern}
+                            required={input.required}
+                          />
+                        )}
+                      </>
+                    )}
+                  </div>
               ))}
-              <button onClick={handleClick}>Submit</button>
+
+              {/* Amenities textarea */}
+              <div className="formInput">
+                <label>Amenities (one per line)</label>
+                <textarea
+                  id="amenities"
+                  value={info.amenities}
+                  onChange={handleChange}
+                  placeholder="Enter amenities (one per line)&#10;Example:&#10;WiFi&#10;AC&#10;Power Backup"
+                  rows={5}
+                />
+              </div>
+
+              {/* Rules textarea */}
+              <div className="formInput">
+                <label>Rules (one per line)</label>
+                <textarea
+                  id="rules"
+                  value={info.rules}
+                  onChange={handleChange}
+                  placeholder="Enter rules (one per line)&#10;Example:&#10;No smoking&#10;No pets&#10;No loud music after 10 PM"
+                  rows={5}
+                />
+              </div>
+
+              <button type="submit">Create Hostel</button>
             </form>
           </div>
         </div>
