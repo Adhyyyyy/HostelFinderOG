@@ -32,8 +32,10 @@ mongoose.connection.on("disconnected", () => {
 //middlewares
 app.use(cors({
   origin: [
+    "http://localhost:3000",
+    "http://localhost:3001",
     "https://hostelfindercucek.netlify.app",
-    "http://localhost:3000"  // keep this for local development
+    "https://hostel-finder-admin.netlify.app"
   ],
   credentials: true
 }));
