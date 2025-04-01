@@ -1,5 +1,5 @@
 import { useLocation } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import Navbar from "../../components/navbar/Navbar";
 import Header from "../../components/header/Header";
@@ -17,7 +17,6 @@ const List = () => {
   const [error, setError] = useState(null);
   const [hostels, setHostels] = useState([]);
   const [selectedHostelId, setSelectedHostelId] = useState(null);
-  const [roomType, setRoomType] = useState("");
 
   // Function to build API URL for fetching hostels
   const buildApiUrl = () => {
@@ -29,31 +28,20 @@ const List = () => {
     return `/hostel?${params.toString()}`;
   };
 
-  // Add useEffect to fetch hostels on component mount
-  useEffect(() => {
-    handleSearch();
-  }, []); // Empty dependency array means this runs once on mount
-
-  const handleSearch = async () => {
+  // Move handleSearch inside useCallback (before the useEffect)
+  const handleSearch = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
       
-      // Add headers to the request
       const config = {
         headers: {
           'Content-Type': 'application/json',
-          // Add any other required headers
         }
       };
 
-      console.log("Fetching from URL:", `${process.env.REACT_APP_API_URL}${buildApiUrl()}`); // Debug log
-
       const response = await axios.get(`${process.env.REACT_APP_API_URL}${buildApiUrl()}`, config);
       
-      console.log("API Response:", response.data); // Debug log
-
-      // Handle different response formats
       if (Array.isArray(response.data)) {
         setHostels(response.data);
       } else if (response.data.data && Array.isArray(response.data.data)) {
@@ -61,17 +49,20 @@ const List = () => {
       } else if (response.data.hostels && Array.isArray(response.data.hostels)) {
         setHostels(response.data.hostels);
       } else {
-        console.error("Unexpected response format:", response.data); // Debug log
         throw new Error("Invalid response format");
       }
     } catch (err) {
-      console.error("Error details:", err.response || err); // Detailed error logging
       setError(err.response?.data?.message || "Failed to fetch hostels. Please try again.");
       setHostels([]);
     } finally {
       setLoading(false);
     }
-  };
+  }, [buildApiUrl]); // Add dependencies for handleSearch
+
+  // Add useEffect to fetch hostels on component mount
+  useEffect(() => {
+    handleSearch();
+  }, [handleSearch]); // Add handleSearch to dependencies
 
   // Debug log for state changes
   useEffect(() => {
@@ -134,7 +125,6 @@ const List = () => {
             {selectedHostelId ? (
               <RoomList
                 hostelId={selectedHostelId}
-                roomType={roomType}
                 onBack={() => setSelectedHostelId(null)}
               />
             ) : (
