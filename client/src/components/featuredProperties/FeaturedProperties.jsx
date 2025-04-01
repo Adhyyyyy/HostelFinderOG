@@ -3,7 +3,7 @@ import useFetch from "../../hooks/useFetch";
 import "./featuredProperties.css";
 
 const FeaturedProperties = () => {
-  const { data, loading, error } = useFetch("/restaurants");
+  const { data, loading, error } = useFetch(`${process.env.REACT_APP_API_URL}/restaurants`);
   const [selectedRestaurant, setSelectedRestaurant] = useState(null);
   const [showMap, setShowMap] = useState(false);
 
