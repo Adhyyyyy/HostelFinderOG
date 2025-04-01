@@ -2,9 +2,7 @@ import useFetch from "../../hooks/useFetch";
 import "./featured.css";
 
 const Featured = () => {
-  const { data, loading } = useFetch(
-    "/hostel/countByGender?gender=Boys,Girls"
-  );
+  const { data, loading } = useFetch(`${process.env.REACT_APP_API_URL}/hostel/countByGender`);
 
   return (
     <div className="featured">

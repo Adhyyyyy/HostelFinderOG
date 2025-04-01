@@ -206,6 +206,11 @@
     width: 90%;
     max-width: 400px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    box-sizing: border-box;
+}
+
+.nForm{
+    width: 200px !important;
 }
 
 .bookingForm h3 {
@@ -216,6 +221,8 @@
 
 .formGroup {
     margin-bottom: 15px;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .formGroup label {
@@ -226,11 +233,13 @@
 }
 
 .formGroup input {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
+    width: calc(100% - 24px);
+    padding: 8px 12px;
+    border: 2px solid #e8e8e8;
+    border-radius: 8px;
     font-size: 14px;
+    transition: border-color 0.2s;
+    box-sizing: border-box;
 }
 
 .formButtons {
@@ -476,12 +485,13 @@ button {
 }
 
 .formGroup input {
-    width: 100%;
+    width: calc(100% - 24px);
     padding: 8px 12px;
     border: 2px solid #e8e8e8;
     border-radius: 8px;
     font-size: 14px;
     transition: border-color 0.2s;
+    box-sizing: border-box;
 }
 
 .formGroup input:focus {
