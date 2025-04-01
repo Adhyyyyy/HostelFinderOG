@@ -18,18 +18,16 @@ const List = () => {
   const [hostels, setHostels] = useState([]);
   const [selectedHostelId, setSelectedHostelId] = useState(null);
 
-  // Function to build API URL for fetching hostels
-  const buildApiUrl = () => {
-    let params = new URLSearchParams();
-    if (category) params.append("category", category);
-    if (genderType) params.append("genderType", genderType);
-    if (messType !== "") params.append("messType", messType);
-    if (searchQuery.trim()) params.append("name", searchQuery.trim());
-    return `/hostel?${params.toString()}`;
-  };
-
-  // Move handleSearch inside useCallback (before the useEffect)
   const handleSearch = useCallback(async () => {
+    const buildApiUrl = () => {
+      let params = new URLSearchParams();
+      if (category) params.append("category", category);
+      if (genderType) params.append("genderType", genderType);
+      if (messType !== "") params.append("messType", messType);
+      if (searchQuery.trim()) params.append("name", searchQuery.trim());
+      return `/hostel?${params.toString()}`;
+    };
+
     try {
       setLoading(true);
       setError(null);
@@ -57,14 +55,12 @@ const List = () => {
     } finally {
       setLoading(false);
     }
-  }, [buildApiUrl]); // Add dependencies for handleSearch
+  }, [category, genderType, messType, searchQuery]);
 
-  // Add useEffect to fetch hostels on component mount
   useEffect(() => {
     handleSearch();
-  }, [handleSearch]); // Add handleSearch to dependencies
+  }, [handleSearch]);
 
-  // Debug log for state changes
   useEffect(() => {
     console.log("Current hostels state:", hostels);
   }, [hostels]);

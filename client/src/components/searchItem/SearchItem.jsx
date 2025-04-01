@@ -23,11 +23,6 @@ const SearchItem = ({ hostel, onBrowseRooms }) => {
     ? hostel.photos[0]  // Use the first image from the array
     : "https://via.placeholder.com/150";  // Default image if no photos exist
 
-  // Create Google Maps Embed URL
-  const mapEmbedUrl = hostel.location
-    ? `https://www.google.com/maps/embed/v1/place?key=YOUR_API_KEY&q=${hostel.location.lat},${hostel.location.lng}&zoom=16`
-    : "";
-
   return (
     <div className="searchItem">
       <img
