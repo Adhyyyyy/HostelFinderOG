@@ -2,11 +2,11 @@ import useFetch from "../../hooks/useFetch";
 import "./featured.css";
 
 const Featured = () => {
-  const { data, loading } = useFetch(`${process.env.REACT_APP_API_URL}/hostel/countByGender`);
+  const { data } = useFetch(`${process.env.REACT_APP_API_URL}/hostel/countByGender?gender=Boys,Girls`);
 
   return (
     <div className="featured">
-      {loading ? (
+      {!data ? (
         "Loading please wait..."
       ) : (
         <>
