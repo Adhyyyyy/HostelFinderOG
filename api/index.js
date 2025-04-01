@@ -31,10 +31,11 @@ mongoose.connection.on("disconnected", () => {
 
 //middlewares
 app.use(cors({
-  origin: ['http://localhost:3000', 'http://localhost:3001'], // Allow both client and admin URLs
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  allowedHeaders: ['Content-Type', 'Authorization']
+  origin: [
+    "https://hostelfindercucek.netlify.app",
+    "http://localhost:3000"  // keep this for local development
+  ],
+  credentials: true
 }));
 
 app.use(cookieParser());
@@ -73,7 +74,7 @@ mongoose.connection.on('connected', async () => {
   }
 });
 
-app.listen(8800, () => {
+app.listen(process.env.PORT || 8800, () => {
     connect();
     console.log("Connected to backend!");
 });
