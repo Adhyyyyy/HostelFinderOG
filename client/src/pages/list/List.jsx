@@ -47,9 +47,9 @@ const List = () => {
         }
       };
 
-      console.log("Fetching from URL:", `http://localhost:8800/api${buildApiUrl()}`); // Debug log
+      console.log("Fetching from URL:", `${process.env.REACT_APP_API_URL}${buildApiUrl()}`); // Debug log
 
-      const response = await axios.get(`http://localhost:8800/api${buildApiUrl()}`, config);
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}${buildApiUrl()}`, config);
       
       console.log("API Response:", response.data); // Debug log
 

@@ -23,7 +23,7 @@ const ReviewBox = () => {
     try {
       setLoading(true);
       const endpoint = reviewData.entityType === "Hostel" ? "/hostel" : "/restaurants";
-      const response = await axios.get(`http://localhost:8800/api${endpoint}`);
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}${endpoint}`);
       
       const data = reviewData.entityType === "Hostel" ? response.data : response.data;
       setEntities(data);
@@ -37,7 +37,7 @@ const ReviewBox = () => {
 
   const fetchReviews = async () => {
     try {
-      const response = await axios.get("http://localhost:8800/api/reviews");
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/reviews`);
       setReviews(response.data.data || response.data);
     } catch (error) {
       console.error("Error fetching reviews:", error);
@@ -66,7 +66,7 @@ const ReviewBox = () => {
         entityName: selectedEntity.name
       };
 
-      await axios.post("http://localhost:8800/api/reviews", payload);
+      await axios.post(`${process.env.REACT_APP_API_URL}/reviews`, payload);
       alert("Review submitted successfully!");
       
       setReviewData({

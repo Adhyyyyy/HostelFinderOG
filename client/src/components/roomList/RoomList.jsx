@@ -26,11 +26,11 @@ const RoomList = ({ hostelId, onBack }) => {
   const fetchRooms = async () => {
     try {
       setLoading(true);
-      const response = await axios.get(`http://localhost:8800/api/rooms/hostel/${hostelId}`);
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/rooms/hostel/${hostelId}`);
       if (response.data.success) {
         const roomsWithBeds = await Promise.all(
           response.data.rooms.map(async (room) => {
-            const bedResponse = await axios.get(`http://localhost:8800/api/rooms/${room._id}`);
+            const bedResponse = await axios.get(`${process.env.REACT_APP_API_URL}/rooms/${room._id}`);
             return {
               ...room,
               beds: bedResponse.data.data.beds || []
@@ -95,7 +95,7 @@ const RoomList = ({ hostelId, onBack }) => {
 
       console.log("Sending booking data:", bookingPayload); // Debug log
 
-      const response = await axios.post("http://localhost:8800/api/bookings", bookingPayload);
+      const response = await axios.post(`${process.env.REACT_APP_API_URL}/bookings`, bookingPayload);
 
       if (response.data.success) {
         alert("Booking submitted successfully!");

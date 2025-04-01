@@ -5,7 +5,7 @@ const AdminLogin = () => {
   const navigate = useNavigate();
 
   const handleAdminLogin = () => {
-    window.location.href = "http://localhost:3001/";
+    window.location.href = process.env.REACT_APP_ADMIN_URL || "https://your-admin-netlify-url.netlify.app";
   };
 
   return (
