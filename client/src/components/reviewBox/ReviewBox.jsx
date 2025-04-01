@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import "./reviewBox.css";
 
@@ -14,12 +14,7 @@ const ReviewBox = () => {
     userName: ""
   });
 
-  useEffect(() => {
-    fetchEntities();
-    fetchReviews();
-  }, [reviewData.entityType]);
-
-  const fetchEntities = async () => {
+  const fetchEntities = useCallback(async () => {
     try {
       setLoading(true);
       const endpoint = reviewData.entityType === "Hostel" ? "/hostel" : "/restaurants";
@@ -33,7 +28,12 @@ const ReviewBox = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [reviewData.entityType]);
+
+  useEffect(() => {
+    fetchEntities();
+    fetchReviews();
+  }, [fetchEntities]);
 
   const fetchReviews = async () => {
     try {

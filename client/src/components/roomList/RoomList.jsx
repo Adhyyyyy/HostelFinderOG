@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import axios from "axios";
 import "./RoomList.css";
 
@@ -19,11 +19,8 @@ const RoomList = ({ hostelId, onBack }) => {
     priceRange: ""
   });
 
-  useEffect(() => {
-    fetchRooms();
-  }, [hostelId]);
-
-  const fetchRooms = async () => {
+  // Add useCallback for fetchRooms
+  const fetchRooms = useCallback(async () => {
     try {
       setLoading(true);
       const response = await axios.get(`${process.env.REACT_APP_API_URL}/rooms/hostel/${hostelId}`);
@@ -44,7 +41,12 @@ const RoomList = ({ hostelId, onBack }) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [hostelId]);
+
+  // Update useEffect
+  useEffect(() => {
+    fetchRooms();
+  }, [fetchRooms]);
 
   // Fix the isPriceInRange function
   const isPriceInRange = (price, range) => {
