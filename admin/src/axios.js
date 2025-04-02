@@ -2,11 +2,10 @@ import axios from "axios";
 
 const instance = axios.create({
   baseURL: "https://hostel-finder-api.onrender.com/api",
-  withCredentials: false,
+  withCredentials: true,
   headers: {
-    "Content-Type": "application/json",
-    "Access-Control-Allow-Origin": "*",
-  },
+    "Content-Type": "application/json"
+  }
 });
 
 export default instance; 
