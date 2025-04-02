@@ -1,23 +1,16 @@
 import axios from "axios";
 
 const axiosInstance = axios.create({
-  baseURL: "https://hostel-finder-api.onrender.com/api",
-  withCredentials: false,
+  baseURL: process.env.REACT_APP_API_URL,
+  withCredentials: true,
   headers: {
-    'Content-Type': 'application/json',
-    'Access-Control-Allow-Origin': '*'
+    'Content-Type': 'application/json'
   }
 });
 
 // Add request interceptor
 axiosInstance.interceptors.request.use(
   (config) => {
-    // Add CORS headers to each request
-    config.headers = {
-      ...config.headers,
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'GET,PUT,POST,DELETE,PATCH,OPTIONS',
-    };
     console.log('Request being sent:', config);
     return config;
   },
