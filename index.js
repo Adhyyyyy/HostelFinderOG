@@ -35,7 +35,8 @@ app.use(cors({
     "http://localhost:3000",
     "http://localhost:3001",
     "https://hostelfindercucek.netlify.app",
-    "https://hostel-finder-admin.netlify.app"
+    "https://hostel-finder-admin.netlify.app",
+    "https://hostelfinderadmindashboard.netlify.app"
   ],
   credentials: true
 }));
